@@ -2,6 +2,7 @@ nl:
   Broarm\CookieConsent\CookieConsent:
     ManageCookies: 'Cookie-instellingen beheren'
     AcceptAllCookies: 'Alle cookies accepteren'
+    AcceptOnlyNecessaryCookies: 'Alleen noodzakelijke cookies accepteren'
   Broarm\CookieConsent\Shortcode\CookieGroupTable:
     Title: 'Naam cookie'
     Provider: 'Geplaatst door'

@@ -4,6 +4,7 @@ namespace Broarm\CookieConsent\Extensions;
 
 use Broarm\CookieConsent\CookieConsent;
 use Broarm\CookieConsent\Control\CookiePolicyPageController;
+use Broarm\CookieConsent\Forms\CookieConsentForm;
 use Broarm\CookieConsent\Model\CookiePolicyPage;
 use Exception;
 use SilverStripe\CMS\Controllers\ContentController;
@@ -23,7 +24,10 @@ use SilverStripe\Control\Director;
  */
 class ContentControllerExtension extends Extension
 {
-    private static $allowed_actions = array('acceptAllCookies');
+    private static $allowed_actions = array(
+        'acceptAllCookies',
+        'acceptOnlyNecessaryCookies'
+    );
 
     /**
      * Place the necessary js and css
@@ -91,7 +95,18 @@ class ContentControllerExtension extends Extension
     public function acceptAllCookies()
     {
         CookieConsent::grantAll();
+        $this->redirectAfterAcceptCookies();
+    }
 
+    public function acceptOnlyNecessaryCookies()
+    {
+        CookieConsent::setConsent([]);
+        CookieConsent::grant(CookieConsent::NECESSARY);
+        $this->redirectAfterAcceptCookies();
+    }
+
+    protected function redirectAfterAcceptCookies()
+    {
         // Get the url the same as the redirect back method gets it
         $url = $this->owner->getBackURL()
             ?: $this->owner->getReturnReferer()
@@ -103,12 +118,21 @@ class ContentControllerExtension extends Extension
         } else {
             $url = Director::absoluteURL("$url?acceptCookies=$cachebust");
         }
-
         $this->owner->redirect($url);
     }
 
     public function getAcceptAllCookiesLink()
     {
-        return Controller::join_links('acceptAllCookies', 'acceptAllCookies');
+        return $this->owner->Link('acceptAllCookies');
+    }
+
+    public function getAcceptOnlyNecessaryCookiesLink()
+    {
+        return $this->owner->Link('acceptOnlyNecessaryCookies');
+    }
+
+    public function CookieConsentForm()
+    {
+        return CookieConsentForm::create($this->owner, 'Form');
     }
 }

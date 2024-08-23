@@ -43,6 +43,8 @@ class CookieConsent
 
     private static $xhr_mode = false;
 
+    private static $show_button_onlyrequired = false;
+
     /**
      * Check if there is consent for the given cookie
      *
